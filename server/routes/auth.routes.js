@@ -7,7 +7,7 @@ const jwt = require('jsonwebtoken')
 const router = Router()
 
 
-router.post('/registartion', [
+router.post('/registration', [
   check('email', 'Uncorrect email').isEmail(),
   check('password', 'Password must be longer than 3 nd shorter than 12').isLength({min: 3, max: 12})
 ], async (req, res) => {
