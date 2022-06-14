@@ -4,7 +4,10 @@ const bcrypt = require('bcryptjs')
 const config = require('config')
 const {check, validationResult} = require('express-validator')
 const jwt = require('jsonwebtoken')
+const authMiddleware = require('../middleware/auth.middleware')
 const router = Router()
+const fileService = require('../services/fileService')
+const File = require('../models/File')
 
 
 router.post('/registration', [
@@ -25,6 +28,9 @@ router.post('/registration', [
     const hashedPassword = await bcrypt.hash(password, 8)
     const user = new User({email, password: hashedPassword})
     await user.save()
+    
+    await fileService.createDir(new File({user: user.id, name: ''}))
+    
     return res.json({message: 'User was created'})
     
   } catch (error) {
@@ -36,6 +42,7 @@ router.post('/registration', [
 
 router.post('/login', async (req, res) => {
   try {
+    
     const {email, password} = req.body
     const user = await User.findOne({email})
     if (!user) {
@@ -45,6 +52,28 @@ router.post('/login', async (req, res) => {
     if (!isPasswordValid) {
       return res.status(400).json({message: 'Password invalid'})
     }
+    const token = jwt.sign({id: user.id}, config.get('tokenSecretKey'), {expiresIn: '1h'})
+
+    return res.json({
+      token,
+      user: {
+        id: user.id,
+        email: user.email,
+        diskSpace: user.diskSpace,
+        usedSpace: user.usedSpace,
+        avatar: user.avatar
+      }
+    })
+  } catch (error) {
+    console.log(error)
+    res.send({message: 'Server error'})
+  }
+})
+
+router.get('/auth', authMiddleware, async (req, res) => {
+  try {
+    const user = await User.findOne({_id: req.user.id})
+
     const token = jwt.sign({id: user.id}, config.get('tokenSecretKey'), {expiresIn: '1h'})
 
     return res.json({

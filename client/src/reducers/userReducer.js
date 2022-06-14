@@ -1,20 +1,32 @@
 const SET_USER = 'SET_USER' // type of action
+const LOGOUT = 'LOGOUT' 
 
+console.log("LS from reducers:: ", localStorage.getItem('token'))
+
+// isAuth : false
+// как правильно настроить дефолт диспатча
 
 const defaultState = {
   currentUser: {},
-  isAuth: false
+  isAuth: localStorage.getItem('token') ? true : false
 }
 
 export default function userReducer(state = defaultState, action) {
+  // console.log(action)
   switch (action.type) {
-    case 'SET_USER':
+    case SET_USER:
       return {
         ...state,
-        currentUser: action.payload.user,
+        currentUser: action.payload,
         isAuth: true
       }
-    
+    case LOGOUT:
+      localStorage.removeItem('token')
+      return {
+        ...state,
+        currentUser: {},
+        isAuth: false
+      }
     default:
       return state
   }
@@ -22,3 +34,4 @@ export default function userReducer(state = defaultState, action) {
 
 
 export const setUser = user => ({type: SET_USER, payload: user})
+export const logout = () => ({type: LOGOUT})

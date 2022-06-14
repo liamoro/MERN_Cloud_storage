@@ -3,6 +3,7 @@ const mongoose = require('mongoose')
 const config = require('config')
 const corsMiddleware = require('./middleware/cors.middleware')
 const authRouter = require('./routes/auth.routes')
+const fileRouter = require('./routes/file.routes')
 
 const app = express()
 const PORT = config.get('serverPort') || 5000
@@ -10,10 +11,8 @@ const PORT = config.get('serverPort') || 5000
 app.use(corsMiddleware)
 app.use(express.json())
 app.use('/api/auth', authRouter)
+app.use('/api/files', fileRouter)
 
-// app.use('/', (req, res) => {
-//   res.json({message: 'Server started'})
-// })
 
 const start = async () => {
   try {
