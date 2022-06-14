@@ -37,19 +37,15 @@ export const login = (email, password) => {
 
 export const auth = () => {
   return async dispatch => {
-    console.log('auth start')
-
     try {
       const response = await axios.get('http://localhost:5000/api/auth/auth', {headers: {Authorization: `Bearer ${localStorage.getItem('token')}`}})
       dispatch(setUser(response.data.user))
       localStorage.setItem('token', response.data.token)
-      console.log('auth end')
 
       // console.log(response.data)
     } catch (error) {
       // console.log(error.response.data.message)
       localStorage.removeItem('token')
-
     }
   }
 }

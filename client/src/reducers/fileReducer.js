@@ -20,3 +20,6 @@ export default function fileReducer(state = defaultState, action) {
       return state
   }
 }
+
+export const setFiles = (files) => ({type: SET_FILES, payload: files})
+export const setCurrentDir = (dir) => ({type: SET_FILES, payload: dir})
