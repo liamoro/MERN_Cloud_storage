@@ -12,13 +12,9 @@ import Disk from "./disk/Disk";
 function App() {
   const isAuth = useSelector(state => state.user.isAuth)
   const dispatch = useDispatch()
-  // console.log(!!localStorage.getItem('token'))
-  // console.log("start App/ isAuth :: ", isAuth)
 
   useEffect(() => {
-    console.log('useEffect start')
     dispatch(auth())
-    console.log('useEffect end')
   }, [])
 
   return (

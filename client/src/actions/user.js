@@ -24,10 +24,11 @@ export const login = (email, password) => {
         password
       })
 
+
       dispatch(setUser(response.data.user))
       localStorage.setItem('token', response.data.token)
 
-      console.log(response.data)
+      console.log("user.js login::: ",  response.data)
     } catch (error) {
       alert(error.response.data.message)
     }
@@ -42,9 +43,7 @@ export const auth = () => {
       dispatch(setUser(response.data.user))
       localStorage.setItem('token', response.data.token)
 
-      // console.log(response.data)
     } catch (error) {
-      // console.log(error.response.data.message)
       localStorage.removeItem('token')
     }
   }

@@ -10,7 +10,6 @@ function Login() {
     setCredentials({...credentials, [event.target.name]: event.target.value})
   }
   // const isAuth = localStorage.getItem('token') ? true : false
-  // console.log("login ", isAuth)
   const dispatch = useDispatch()
 
   return (

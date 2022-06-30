@@ -12,7 +12,6 @@ function Registration() {
   // const [email, setEmail] = useState('')
   // const [password, setPassword] = useState('')
   // useEffect(() => {
-  //   console.log('creds:::: ', credentials)
   // })
 
   return (
