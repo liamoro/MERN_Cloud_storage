@@ -1,4 +1,4 @@
-
+@import '../../utils/colors.scss';
 
 .disk {
   margin-top: 20px;
@@ -12,6 +12,18 @@
 
   }
   &__create {
+    margin-left: 10px;
+  }
+  &__upload-input {
+    display: none;
+    
+  }
+  &__upload-label {
+    display: flex;
+    align-items: center;
+    padding: 5px 10px;
+    border: 1px dashed $font-color;
+    cursor: pointer;
     margin-left: 10px;
   }
 }
