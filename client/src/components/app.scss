@@ -22,7 +22,8 @@ body {
 }
 
 .wrap {
-  // width: 1140px;
+  max-width: 1120px;
   display: flex;
   flex-direction: column;
+  width: 100%;
 }

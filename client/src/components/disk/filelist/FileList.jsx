@@ -4,11 +4,11 @@ import './filelist.scss'
 import File from './file/File'
 
 function FileList() {
-  useSelector(state => console.log(state))
+  // useSelector(state => console.log("FileList.jsx start ", state))
   // console.log("FileList state:: ", useSelector(state => state.files.files))
 
   const files = useSelector(state => state.files.files)?.map(file => {
-    return <File key={file.id} file={file}/>
+    return <File key={file._id} file={file}/>
   })
 
   // const files = [{_id:1, name: 'direc', type: 'jpg', size: '5gb', date: '20.02.2020'}, {_id:2, name: 'direc2', type: 'dir', size: '5gb', date: '20.12.2020'}].map( file => <File key={file._id} file={file}/> )

@@ -1,4 +1,6 @@
 const fileService = require('../services/fileService')
+const config = require('config')
+const fs = require('fs')
 const User = require('../models/User')
 const File = require('../models/File')
 const path = require('path')
@@ -39,6 +41,60 @@ class FileController {
     } catch (e) {
       console.log(e)
       return res.status(500).json({message: 'Can not get file'})
+    }
+  }
+  async uploadFile(req, res) {
+    try {
+      console.log("start upload")
+      const file = req.files.file
+      const parent = await File.findOne( {user: req.user.id, _id: req.body.parent} )
+      console.log("PARENT::::: ", parent)
+      const user = await User.findOne({_id: req.user.id})
+
+      if (user.usedSpace + file.size > user.diskSpace) {
+        return res.status(400).json({message: 'There no more space on the disk! '})
+      }
+      user.usedSpace += file.size
+
+
+      let filePath;
+      if (parent) {
+        filePath = path.join(config.get('filePath'), req.user.id, parent.path, file.name)
+        console.log("filePath::::::::: ", filePath)
+      } else {
+        filePath = path.join(config.get('filePath'),req.user.id, file.name)
+      }
+      if (fs.existsSync(filePath)) {
+        return res.status(400).json({message: 'File already exist!'})
+      }
+
+      file.mv(filePath)
+
+      const type = file.name.split('.').pop()
+      console.log("TYPE::: ", type)
+      const dbFile = new File({
+        name: file.name,
+        type,
+        size: file.size,
+        path: parent?.path,
+        parent: parent?._id,
+        user: user?._id
+      })
+      console.log("dbFile:::::::: ", dbFile)
+
+      console.log("File Created")
+
+      await dbFile.save()
+      await user.save()
+      console.log("All saved")
+      console.log("dbFile:::::::: ", dbFile)
+
+      res.json(dbFile)
+      // res.status(200).json({message: 'ok'})
+
+    } catch (e) {
+      console.log(e)
+      return res.status(500).json({message: e})
     }
   }
 }

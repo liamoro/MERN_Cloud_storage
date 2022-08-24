@@ -14,8 +14,7 @@ function Login() {
 
   return (
     
-      <div>
-        {
+        
           <div className='authorization'>
             <div className='authorization__header'>Авторизация</div>
             <Input type='email' name='email' value={credentials.email} 
@@ -23,8 +22,7 @@ function Login() {
             <Input type='password' name='password' value={credentials.password} setValue={credentialsHandler}  placeholder='Введите пароль...'/>
             <button className='authorization__btn' onClick={() => {dispatch(login(credentials.email, credentials.password))}}>Войти</button>
           </div>
-        }
-      </div>
+        
     
     
   )
