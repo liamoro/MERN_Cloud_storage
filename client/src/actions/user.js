@@ -1,5 +1,5 @@
 import axios from "axios";
-import { setUser } from "../reducers/userReducer";
+import { setUser, logout } from "../reducers/userReducer";
 
 
 export const registration = async (email, password) => {
@@ -45,6 +45,7 @@ export const auth = () => {
 
     } catch (error) {
       localStorage.removeItem('token')
+      dispatch(logout())
     }
   }
 }

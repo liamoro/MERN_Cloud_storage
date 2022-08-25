@@ -97,6 +97,22 @@ class FileController {
       return res.status(500).json({message: e})
     }
   }
+
+  async downloadFile(req, res) {
+    try {
+      const file = await File.findOne({_id: req.query.id, user: req.user.id})
+      const pathFile = path.join(config.get('filePath'), req.user.id, file.path,  file.name) 
+
+      if (fs.existsSync(pathFile)) {
+        return res.download(pathFile, file.name)
+      }
+      return res.status(400).json({'message': 'File was not fined'})
+    } catch (e) {
+      console.log(e)
+      return res.status(500).json({'message': 'Download error'})
+    }
+    
+  }
 }
 
 module.exports = new FileController()
