@@ -45,10 +45,8 @@ class FileController {
   }
   async uploadFile(req, res) {
     try {
-      console.log("start upload")
       const file = req.files.file
       const parent = await File.findOne( {user: req.user.id, _id: req.body.parent} )
-      console.log("PARENT::::: ", parent)
       const user = await User.findOne({_id: req.user.id})
 
       if (user.usedSpace + file.size > user.diskSpace) {
@@ -57,12 +55,13 @@ class FileController {
       user.usedSpace += file.size
 
 
-      let filePath;
+      let filePath, fileShortPath= file.name;
+
       if (parent) {
-        filePath = path.join(config.get('filePath'), req.user.id, parent.path, file.name)
-        console.log("filePath::::::::: ", filePath)
+        fileShortPath = path.join(parent.path, file.name)
+        filePath = path.join(config.get('filePath'), req.user.id, fileShortPath)
       } else {
-        filePath = path.join(config.get('filePath'),req.user.id, file.name)
+        filePath = path.join(config.get('filePath'),req.user.id, fileShortPath)
       }
       if (fs.existsSync(filePath)) {
         return res.status(400).json({message: 'File already exist!'})
@@ -71,18 +70,15 @@ class FileController {
       file.mv(filePath)
 
       const type = file.name.split('.').pop()
-      console.log("TYPE::: ", type)
+
       const dbFile = new File({
         name: file.name,
         type,
         size: file.size,
-        path: parent?.path,
+        path: fileShortPath,
         parent: parent?._id,
         user: user?._id
       })
-      console.log("dbFile:::::::: ", dbFile)
-
-      console.log("File Created")
 
       await dbFile.save()
       await user.save()
@@ -112,6 +108,32 @@ class FileController {
       return res.status(500).json({'message': 'Download error'})
     }
     
+  }
+  async deleteFile (req, res) {
+    // ищем в базе файл
+    // ищем его физически
+    // удаляем 
+    // возвразаем ответ
+    try {
+      const file = await File.findOne({_id: req.query.id, user: req.user.id})
+      if (!file) {
+        return res.status(400).json({message: 'File not found'})
+      }
+
+      fileService.deleteFile(file) // физически удаляем файл
+      
+      
+      await file.remove() //удаляем из базы
+      return res.json({message: `${file.name} was deleted`})
+
+
+
+    } catch (error) {
+      console.log(error)
+      return res.status(400).json({message: 'Dir is not empty'})
+    }
+    
+
   }
 }
 

@@ -1,5 +1,6 @@
 import axios from 'axios'
-import {addFile, setFiles} from "../reducers/fileReducer";
+import {addFile, deleteFileAction, setFiles} from "../reducers/fileReducer";
+import { auth } from './user';
 
 export function  getFiles(dirId) {
   return async dispatch => {
@@ -31,6 +32,10 @@ export function  createDir(dirId, name) {
       dispatch(addFile(response.data))
       console.log("file.js dir was created ", response.data)
     } catch (e) {
+      if (e.response.status === 401 && e.response.statusText === "Unauthorized") {
+        console.log("User is unauthorized!")
+        dispatch(auth())
+      }
       alert(e.response.data.message)
     }
   }
@@ -65,23 +70,47 @@ export function  uploadFile(file, dirId) {
 }
 
 export async function downloadFile(file) {
-  const response = await fetch(`http://localhost:5000/api/files/download?id=${file._id}`, {
-    headers: {
-      Authorization: `Bearer ${localStorage.getItem('token')}`
+  try {
+    const response = await fetch(`http://localhost:5000/api/files/download?id=${file._id}`, {
+      headers: {
+        Authorization: `Bearer ${localStorage.getItem('token')}`
+      }
+    })
+
+    if (response.status === 200) {
+
+      // для скачивания создаем невидимую ссылку, имитируем клик по ней и удаляем
+
+      const blob = await response.blob() // подобный физическому файлу объект
+      const downloadUrl = window.URL.createObjectURL(blob)  // создаем ссылку для скачанивания в формате blob
+      const link = document.createElement('a')
+      link.href = downloadUrl 
+      link.download = file.name // имя для скачиваемого файла
+      document.body.appendChild(link)
+      link.click() // имитируем клик
+      link.remove() // удаляем элемент из дом
+      
     }
-  })
-
-  if (response.status === 200) {
-    const blob = await response.blob() // подобный физическому файлу объект
-    const downloadUrl = window.URL.createObjectURL(blob) 
-    // для скачивания создаем невидимую ссылку, имитируем клик по ней и удаляем
-    const link = document.createElement('a')
-    link.href = downloadUrl
-    link.download = file.name
-    document.body.appendChild(link)
-    link.click()
-    link.remove()
-    
+  } catch (e) {
+    console.log(e)
   }
+}
 
+export function deleteFile(file) {
+  console.log('DF File: ', file)
+  return async dispatch => {
+    try {
+      console.log("start d")
+      const response = await axios.delete(`http://localhost:5000/api/files?id=${file._id}`, {
+        headers: {
+          Authorization: `Bearer ${localStorage.getItem('token')}`
+        }
+      })
+      dispatch(deleteFileAction(file._id))
+      alert(response.data.message)
+
+    } catch (e) {
+      console.log(e?.response?.data?.message)
+    }
+  }
 }
