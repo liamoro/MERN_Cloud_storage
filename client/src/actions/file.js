@@ -1,5 +1,6 @@
 import axios from 'axios'
 import {addFile, deleteFileAction, setFiles} from "../reducers/fileReducer";
+import { addUploadFile, showUploader } from '../reducers/uploadReducer';
 import { auth } from './user';
 
 export function  getFiles(dirId) {
@@ -49,6 +50,15 @@ export function  uploadFile(file, dirId) {
       if (dirId) {
         formData.append('parent', dirId)
       }
+
+      // start Uploader window
+      console.log("HERE file:: ", file)
+      const uploadFile = {name: file.name, progress: 0, id: Date.now()}
+      dispatch(showUploader())
+      console.log(uploadFile)
+      dispatch(addUploadFile(uploadFile))
+      // end Uploader window
+
 
       const response = await axios.post(`http://localhost:5000/api/files/upload`, formData, {
         headers: {Authorization: `Bearer ${localStorage.getItem('token')}`},

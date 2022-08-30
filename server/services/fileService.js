@@ -28,7 +28,7 @@ class FileService {
   deleteFile (file) {
     const filepath = this.getPath( file)
 
-    file.type === 'dir' ? fs.rmdirSync(filepath) : fs.rmSync(filepath)
+    file.type === 'dir' ? fs.rmdirSync(filepath, {recursive: true}) : fs.rmSync(filepath)
 
   }
   getPath (file ){

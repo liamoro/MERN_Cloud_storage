@@ -82,8 +82,8 @@ class FileController {
 
       await dbFile.save()
       await user.save()
-      console.log("All saved")
-      console.log("dbFile:::::::: ", dbFile)
+      // console.log("All saved")
+      // console.log("dbFile:::::::: ", dbFile)
 
       res.json(dbFile)
       // res.status(200).json({message: 'ok'})
@@ -97,7 +97,7 @@ class FileController {
   async downloadFile(req, res) {
     try {
       const file = await File.findOne({_id: req.query.id, user: req.user.id})
-      const pathFile = path.join(config.get('filePath'), req.user.id, file.path,  file.name) 
+      const pathFile = path.join(config.get('filePath'), req.user.id, file.path) 
 
       if (fs.existsSync(pathFile)) {
         return res.download(pathFile, file.name)

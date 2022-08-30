@@ -5,6 +5,7 @@ import FileList from './filelist/FileList'
 import './disk.scss'
 import Popup from './Popup.jsx'
 import { popToStack, setCurrentDir, setPopupDisplay } from '../../reducers/fileReducer.js'
+import Uploader from './uploader/Uploader.jsx'
 
 function Disk() {
   const dispatch = useDispatch()
@@ -27,6 +28,7 @@ function Disk() {
   }
   function fileUploadHandler (event) {
     const files = [...event.target.files]
+    console.log("Disk.jsx files ::: ", files)
     files.forEach(file => dispatch(uploadFile(file, currentDir)))
 
   }
@@ -68,6 +70,7 @@ function Disk() {
       </div>
       <FileList />
       <Popup/>
+      <Uploader/>
     </div>
     :
     <div className='drop-area' onDrop={dropHandler} onDragEnter={dragEnterHandler} onDragLeave={dragLeaveHandler} onDragOver={dragEnterHandler}>
