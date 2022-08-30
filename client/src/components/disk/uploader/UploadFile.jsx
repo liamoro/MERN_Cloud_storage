@@ -1,14 +1,18 @@
 import React from 'react'
 import "./uploadFile.scss"
+import {useDispatch} from 'react-redux'
+import {removeUploadFile} from '../../../reducers/uploadReducer'
+
 
 function UploadFile({file}) {
-  console.log("UF::: ", file)
+  // console.log("UF::: ", file)
+  const dispatch = useDispatch()
 
   return (
     <div className='upload-file'>
       <div className='upload-file__header'>
         <div className='upload-file__title'>{file.name}</div>
-        <button className='upload-file__delete'></button>
+        <button className='upload-file__delete' onClick={() => dispatch(removeUploadFile(file.id))}></button>
       </div>
       <div className='upload-file__progress-bar'>
         <div className='upload-file__upload-bar' style={{width: file.progress + "%"}}/>

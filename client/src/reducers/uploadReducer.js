@@ -10,13 +10,11 @@ console.log("LS from reducers:: ", localStorage.getItem('token'))
 // как правильно настроить дефолт диспатча
 
 const defaultState = {
-  isVisible: false,
+  isVisible: true,
   files: []
 }
 
 export default function userReducer(state = defaultState, action) {
-  console.log('action:::: ', action)
-  console.log('state::::: ', state)
   switch (action.type) {
     case SHOW_UPLOADER: return {...state, isVisible: true}
     case HIDE_UPLOADER: return {...state, isVisible: false}
