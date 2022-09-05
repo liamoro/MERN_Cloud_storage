@@ -1,6 +1,6 @@
 import axios from 'axios'
 import {addFile, deleteFileAction, setFiles} from "../reducers/fileReducer";
-import { addUploadFile, showUploader } from '../reducers/uploadReducer';
+import { addUploadFile, changeUploadFile, showUploader } from '../reducers/uploadReducer';
 import { auth } from './user';
 
 export function  getFiles(dirId) {
@@ -52,10 +52,10 @@ export function  uploadFile(file, dirId) {
       }
 
       // start Uploader window
-      console.log("HERE file:: ", file)
+      // console.log("HERE file:: ", file)
       const uploadFile = {name: file.name, progress: 0, id: Date.now()}
       dispatch(showUploader())
-      console.log(uploadFile)
+      // console.log(uploadFile)
       dispatch(addUploadFile(uploadFile))
       // end Uploader window
 
@@ -66,8 +66,9 @@ export function  uploadFile(file, dirId) {
           const totalLength = progressEvent.lengthComputable ? progressEvent.total : progressEvent.target.getResponseHeader('content-length') || progressEvent.target.getResponseHeader('x-decompressed-content-length');
           console.log('total', totalLength)
           if (totalLength) {
-              let progress = Math.round((progressEvent.loaded * 100) / totalLength)
-              console.log(progress)
+              uploadFile.progress = Math.round((progressEvent.loaded * 100) / totalLength)
+              // console.log(progress)
+              dispatch(changeUploadFile(uploadFile))
           }
         }
       })
