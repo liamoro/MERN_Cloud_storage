@@ -3,18 +3,18 @@ import {useDispatch, useSelector} from 'react-redux'
 import { createDir, getFiles, uploadFile } from '../../actions/file.js'
 import FileList from './filelist/FileList'
 import './disk.scss'
+import './loader.scss'
 import Popup from './Popup.jsx'
 import { popToStack, setCurrentDir, setPopupDisplay } from '../../reducers/fileReducer.js'
 import Uploader from './uploader/Uploader.jsx'
 
 function Disk() {
   const dispatch = useDispatch()
+  const loader = useSelector(state => state.app.loader)
   const currentDir = useSelector(state => state.files.currentDir)
   const dirStack = useSelector(state => state.files.dirStack)
   const [dragEnter, setDragEnter] = useState(false)
-
-  // console.log("currentDir:: ", currentDir)
-  // console.log("dirStack:: ", dirStack)
+  const [sort, setSort] = useState('type')
 
 
   function showPopupHandler() {
@@ -26,38 +26,47 @@ function Disk() {
     dispatch(popToStack(dirStack.length - 1))
     dispatch(setCurrentDir(backDirId))
   }
+
   function fileUploadHandler (event) {
     const files = [...event.target.files]
-    console.log("Disk.jsx files ::: ", files)
     files.forEach(file => dispatch(uploadFile(file, currentDir)))
-
   }
+
   function dragEnterHandler (event) {
     event.preventDefault()
     event.stopPropagation()
     setDragEnter(true)
   }
+
   function dragLeaveHandler (event) {
     event.preventDefault()
     event.stopPropagation()
     setDragEnter(false)
   }
+
   function dropHandler (event) {
     event.preventDefault()
     event.stopPropagation()
     let files = [...event.dataTransfer.files]
     files.forEach(file => dispatch(uploadFile(file, currentDir)))
-    
     setDragEnter(false)
-
   }
 
+  
   useEffect(() => {
-    // console.log('currentDir::: ', currentDir)
-    dispatch(getFiles(currentDir))
-    // console.log('currentDir::: ', currentDir)
-  }, [currentDir])
+    // console.log(sort)
+    // let selection = document.getSelection();
+    // console.log(selection)
+    dispatch(getFiles(currentDir, sort))
+  }, [currentDir, sort])
 
+
+  if (loader === true) {
+    return (<div className='loader'>
+      <div class="lds-ripple"><div></div><div></div></div>
+    </div>)
+  }
+  
   return ( !dragEnter ? 
     <div className='disk'  onDragEnter={dragEnterHandler} onDragLeave={dragLeaveHandler} onDragOver={dragEnterHandler} >
       <div className='disk__btns'>
@@ -67,6 +76,13 @@ function Disk() {
           <label htmlFor='disk__upload-input' className='disk__upload-label'>Загрузить файл</label>
           <input multiple={true} onChange={event => fileUploadHandler(event)}  type='file' id='disk__upload-input' className='disk__upload-input'></input>
         </div>
+        <select className='disk__select'
+                value={sort}
+                onChange={(e) => setSort(e.target.value)}>
+          <option value='name'>По имени</option>
+          <option value='type'>По типу</option>
+          <option value='date'>По дате</option>
+        </select>
       </div>
       <FileList />
       <Popup/>

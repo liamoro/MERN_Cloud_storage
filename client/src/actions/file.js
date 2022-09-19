@@ -1,18 +1,35 @@
 import axios from 'axios'
+import { hideLoader, showLoader } from '../reducers/appReduser';
 import {addFile, deleteFileAction, setFiles} from "../reducers/fileReducer";
 import { addUploadFile, changeUploadFile, showUploader } from '../reducers/uploadReducer';
 import { auth } from './user';
 
-export function  getFiles(dirId) {
+export function  getFiles(dirId, sort) {
   return async dispatch => {
     try {
-      const response = await axios.get(`http://localhost:5000/api/files${ dirId ? '?parent='+dirId : '' }`, {
+      dispatch(showLoader())
+      
+      // start имитация загрузки пока к файлам слишком быстрый доступ
+        let sleep = async (ms) => {
+          return new Promise ( resolve => setTimeout(resolve, ms))
+        }
+        await sleep(300)
+      // 
+
+      let url = `http://localhost:5000/api/files`
+      if (dirId) url = `http://localhost:5000/api/files?parent=${dirId}`
+      if (sort) url = `http://localhost:5000/api/files?sort=${sort}`
+      if (dirId && sort) url = `http://localhost:5000/api/files?parent=${dirId}&sort=${sort}`
+
+      const response = await axios.get(url, {
         headers: {Authorization: `Bearer ${localStorage.getItem('token')}`}
       })
       dispatch(setFiles(response.data))
       // console.log("file.js ", response.data)
     } catch (e) {
       alert(e.response.data.message)
+    } finally {
+      dispatch(hideLoader())
     }
   }
 }
@@ -53,7 +70,7 @@ export function  uploadFile(file, dirId) {
 
       // start Uploader window
       // console.log("HERE file:: ", file)
-      const uploadFile = {name: file.name, progress: 0, id: Date.now()}
+      let uploadFile = {name: file.name, progress: 0, id: Date.now()}
       dispatch(showUploader())
       // console.log(uploadFile)
       dispatch(addUploadFile(uploadFile))
@@ -66,9 +83,7 @@ export function  uploadFile(file, dirId) {
           const totalLength = progressEvent.lengthComputable ? progressEvent.total : progressEvent.target.getResponseHeader('content-length') || progressEvent.target.getResponseHeader('x-decompressed-content-length');
           console.log('total', totalLength)
           if (totalLength) {
-              uploadFile.progress = Math.round((progressEvent.loaded * 100) / totalLength)
-              // console.log(progress)
-              dispatch(changeUploadFile(uploadFile))
+              dispatch(changeUploadFile({...uploadFile, progress: Math.round((progressEvent.loaded * 100) / totalLength)  }))
           }
         }
       })
