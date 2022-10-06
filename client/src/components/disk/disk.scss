@@ -9,6 +9,7 @@
   }
   &__btn {
     padding: 5px 10px;
+    cursor: pointer;
 
   }
   &__create {
@@ -23,11 +24,29 @@
     align-items: center;
     padding: 5px 10px;
     border: 1px dashed $font-color;
-    cursor: pointer;
+    // cursor: pointer;
     margin-left: 10px;
   }
   &__select {
     margin-left: auto;
+    // cursor: pointer;
+  }
+  &__list, &__plate {
+    width: 20px;
+    height: 20px;
+    border: none;
+    outline: none;
+    background: no-repeat center center;
+    background-size: contain;
+    margin: auto 0;
+    margin-left: 10px;
+  }
+  &__list {
+    background-image: url('../../assets/img/list.svg');
+    margin-right: 10px;
+  }
+  &__plate {
+    background-image: url('../../assets/img/plate-m.svg');
   }
 }
 

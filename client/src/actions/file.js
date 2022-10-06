@@ -27,7 +27,7 @@ export function  getFiles(dirId, sort) {
       dispatch(setFiles(response.data))
       // console.log("file.js ", response.data)
     } catch (e) {
-      alert(e.response.data.message)
+      alert(e.response.data.message || e)
     } finally {
       dispatch(hideLoader())
     }
@@ -137,6 +137,27 @@ export function deleteFile(file) {
 
     } catch (e) {
       console.log(e?.response?.data?.message)
+    }
+  }
+}
+
+export function searchFiles(search) {
+  return async dispatch => {
+    try {
+      let url = `http://localhost:5000/api/files/search?search=${search}`
+
+      const response = await axios.get(url, {
+        headers: {
+          Authorization: `Bearer ${localStorage.getItem('token')}`
+        }
+      })
+
+      dispatch(setFiles(response.data))
+
+    } catch (e) {
+      console.log(e)
+    } finally {
+      dispatch(hideLoader())
     }
   }
 }

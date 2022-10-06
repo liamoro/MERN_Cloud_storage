@@ -120,7 +120,8 @@ class FileController {
   async downloadFile(req, res) {
     try {
       const file = await File.findOne({_id: req.query.id, user: req.user.id})
-      const pathFile = path.join(config.get('filePath'), req.user.id, file.path) 
+      // const pathFile = path.join(config.get('filePath'), req.user.id, file.path) 
+      const pathFile = fileService.getPath(file)
 
       if (fs.existsSync(pathFile)) {
         return res.download(pathFile, file.name)
@@ -133,10 +134,7 @@ class FileController {
     
   }
   async deleteFile (req, res) {
-    // ищем в базе файл
-    // ищем его физически
-    // удаляем 
-    // возвразаем ответ
+
     try {
       const file = await File.findOne({_id: req.query.id, user: req.user.id})
       if (!file) {
@@ -159,10 +157,12 @@ class FileController {
 
   }
 
-  async searchFile (req, res) {
+  async searchFiles (req, res) {
+    console.log('start ssearch')
     try {
 
       const searchName = req.query.search
+
       let files = await File.find({user: req.user.id})
       files = files.filter(file => file.name.includes(searchName))
       return res.json(files)
@@ -173,6 +173,7 @@ class FileController {
     }
 
   }
+
 }
 
 

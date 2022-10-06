@@ -4,7 +4,7 @@ const ADD_UPLOAD_FILE = 'ADD_UPLOAD_FILE'
 const REMOVE_UPLOAD_FILE = 'REMOVE_UPLOAD_FILE' 
 const CHANGE_UPLOAD_FILE = 'CHANGE_UPLOAD_FILE' 
 
-console.log("LS from reducers:: ", localStorage.getItem('token'))
+// console.log("LS from reducers:: ", localStorage.getItem('token'))
 
 // isAuth : false
 // как правильно настроить дефолт диспатча

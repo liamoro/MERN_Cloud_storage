@@ -11,6 +11,7 @@ function File({file}) {
   // console.log("File.jsx:: ", file)
   const dispatch = useDispatch()
   const currentDir = useSelector(state => state.files.currentDir)
+  const fileView = useSelector(state => state.files.view)
   
 
   function openDirHandler(file) {
@@ -33,17 +34,33 @@ function File({file}) {
     console.log("dispatch(deleteFile(file))  after")
   }
 
+  if (fileView === 'list') {
+    return (
+      <div className={file.type === 'dir' ? 'file directory' : 'file'} onClick={() => openDirHandler(file)}>
+              <img src={file.type === 'dir' ? dirLogo : fileLogo} alt="" className="file__img"/>
+              <div className="file__name">{file.name}</div>
+              <div className="file__date">{file.date.slice(0,10)}</div>
+              <div className="file__size">{sizeFormat(file.size)}</div>
+              { file.type !== 'dir' &&  <button className="file__btn file__download" onClick={(e) => downloadHandler(e)}></button>}
+              <button onClick={(e) => deleteHandler(e)} className="file__btn file__delete"></button>
+          </div>
+    )
+  }
+  if (fileView === 'plate') {
+    return (
+      <div className={file.type === 'dir' ? 'file-plate directory' : 'file-plate'} onClick={() => openDirHandler(file)}>
+              <img src={file.type === 'dir' ? dirLogo : fileLogo} alt="" className="file-plate__img"/>
+              <div className="file-plate__name">{file.name}</div>
+              <div className='file-plate__btns'>
+                { file.type !== 'dir' && 
+                <button className="file-plate__btn file__download" onClick={(e) => downloadHandler(e)}></button>}
+                <button onClick={(e) => deleteHandler(e)} className="file-plate__btn file__delete"></button>
+              </div>  
+              </div>
+    )
+  }
 
-  return (
-    <div className='file' onClick={() => openDirHandler(file)}>
-            <img src={file.type === 'dir' ? dirLogo : fileLogo} alt="" className="file__img"/>
-            <div className="file__name">{file.name}</div>
-            <div className="file__date">{file.date.slice(0,10)}</div>
-            <div className="file__size">{sizeFormat(file.size)}</div>
-            { file.type !== 'dir' &&  <button className="file__btn file__download" onClick={(e) => downloadHandler(e)}></button>}
-            <button onClick={(e) => deleteHandler(e)} className="file__btn file__delete"></button>
-        </div>
-  )
+  
 }
 
 export default File
