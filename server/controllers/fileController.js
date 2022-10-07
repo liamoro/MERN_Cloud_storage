@@ -4,6 +4,8 @@ const fs = require('fs')
 const User = require('../models/User')
 const File = require('../models/File')
 const path = require('path')
+const Uuid = require('uuid')
+
 
 class FileController {
 
@@ -170,6 +172,42 @@ class FileController {
     } catch (e) {
       console.log(e)
       return res.status(400).json('File was not fined')
+    }
+
+  }
+  async uploadAvatar (req, res) {
+    try {
+      const file = req.files.file
+      const user = await User.findById(req.user.id)
+      const avatarName = Uuid.v4() + ".jpg"
+      console.log('path', path.resolve(config.get('staticPath'), avatarName))
+      file.mv(path.resolve(config.get('staticPath'), avatarName))
+      user.avatar = avatarName
+      await user.save()
+
+      return res.json(user)
+
+    } catch (e) {
+      console.log(e)
+      return res.status(400).json('Upload avatar error')
+    }
+
+  }
+  async deleteAvatar (req, res) {
+    try {
+      // const file = req.files.file
+      const user = await User.findById(req.user.id)
+      const avatarName = user.avatar
+      fs.unlinkSync(path.resolve(config.get('staticPath'), avatarName))
+      // file.mv(path.resolve(config.get('staticPath'), avatarName))
+      user.avatar = null
+      await user.save()
+
+      return res.json(user)
+
+    } catch (e) {
+      console.log(e)
+      return res.status(400).json('Delete avatar error')
     }
 
   }

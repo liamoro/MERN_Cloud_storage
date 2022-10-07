@@ -71,7 +71,7 @@ function Disk() {
   return ( !dragEnter ? 
     <div className='disk'  onDragEnter={dragEnterHandler} onDragLeave={dragLeaveHandler} onDragOver={dragEnterHandler} >
       <div className='disk__btns'>
-        {currentDir && <button className='btn disk__btn disk__back' onClick={() => backClickHandler()}>Назад</button>}
+        {currentDir && <button className='btn disk__btn disk__back btn-back' onClick={() => backClickHandler()}></button>}
         <button className='btn disk__btn disk__create' onClick={() => showPopupHandler()}>Создать папку</button>
         <div className='disk__upload'>
           <label htmlFor='disk__upload-input' className='btn disk__upload-label'>Загрузить файл</label>
