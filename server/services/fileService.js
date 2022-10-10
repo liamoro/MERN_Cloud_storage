@@ -6,8 +6,8 @@ const config = require('config')
 class FileService {
 
 
-  createDir(file) {
-    const filePath = path.resolve(config.get('filePath'), file.user.toString(), file.path)
+  createDir(req, file) {
+    const filePath = this.getPath(req, file)
 
     return new Promise(((resolve, reject) => {
       try {
@@ -25,14 +25,14 @@ class FileService {
       }
     }))
   }
-  deleteFile (file) {
-    const filepath = this.getPath( file)
+  deleteFile (req, file) {
+    const filepath = this.getPath( req, file)
 
     file.type === 'dir' ? fs.rmSync(filepath, {recursive: true}) : fs.rmSync(filepath)
 
   }
-  getPath (file ){
-    return path.resolve(config.get('filePath'), file.user.toString(), file.path)
+  getPath (req, file ){
+    return path.resolve(req.filePath, file.user.toString(), file.path)
   }
 
 }

@@ -17,11 +17,11 @@ class FileController {
 
       if (!parentFile) {
         file.path = name
-        await fileService.createDir(file)
+        await fileService.createDir(req, file)
       } else {
         file.path = path.join(parentFile.path, file.name)
         // file.path = `${parentFile.path}/${file.name}`
-        await fileService.createDir(file)
+        await fileService.createDir(req, file)
         parentFile.childs.push(file._id)
         await parentFile.save()
 
@@ -84,9 +84,9 @@ class FileController {
 
       if (parent) {
         fileShortPath = path.join(parent.path, file.name)
-        filePath = path.join(config.get('filePath'), req.user.id, fileShortPath)
+        filePath = path.join(req.filePath, req.user.id, fileShortPath)
       } else {
-        filePath = path.join(config.get('filePath'),req.user.id, fileShortPath)
+        filePath = path.join(req.filePath,req.user.id, fileShortPath)
       }
       if (fs.existsSync(filePath)) {
         return res.status(400).json({message: 'File already exist!'})
@@ -101,8 +101,8 @@ class FileController {
         type,
         size: file.size,
         path: fileShortPath,
-        parent: parent?._id,
-        user: user?._id
+        parent: parent ? parent._id : null,
+        user: user._id
       })
 
       await dbFile.save()
@@ -122,8 +122,8 @@ class FileController {
   async downloadFile(req, res) {
     try {
       const file = await File.findOne({_id: req.query.id, user: req.user.id})
-      // const pathFile = path.join(config.get('filePath'), req.user.id, file.path) 
-      const pathFile = fileService.getPath(file)
+      // const pathFile = path.join(req.filePath, req.user.id, file.path) 
+      const pathFile = fileService.getPath(req, file)
 
       if (fs.existsSync(pathFile)) {
         return res.download(pathFile, file.name)
@@ -143,7 +143,7 @@ class FileController {
         return res.status(400).json({message: 'File not found'})
       }
 
-      fileService.deleteFile(file) // физически удаляем файл
+      fileService.deleteFile(req, file) // физически удаляем файл
       
       
       await file.remove() //удаляем из базы
