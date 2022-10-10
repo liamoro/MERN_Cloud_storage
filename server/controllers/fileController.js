@@ -160,7 +160,6 @@ class FileController {
   }
 
   async searchFiles (req, res) {
-    console.log('start ssearch')
     try {
 
       const searchName = req.query.search
@@ -180,7 +179,6 @@ class FileController {
       const file = req.files.file
       const user = await User.findById(req.user.id)
       const avatarName = Uuid.v4() + ".jpg"
-      console.log('path', path.resolve(config.get('staticPath'), avatarName))
       file.mv(path.resolve(config.get('staticPath'), avatarName))
       user.avatar = avatarName
       await user.save()

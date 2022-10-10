@@ -5,7 +5,6 @@ import {removeUploadFile} from '../../../reducers/uploadReducer'
 
 
 function UploadFile({file}) {
-  // console.log("UF::: ", file)
   const dispatch = useDispatch()
 
   return (

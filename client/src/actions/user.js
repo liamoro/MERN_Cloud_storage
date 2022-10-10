@@ -28,7 +28,6 @@ export const login = (email, password) => {
       dispatch(setUser(response.data.user))
       localStorage.setItem('token', response.data.token)
 
-      console.log("user.js login::: ",  response.data)
     } catch (error) {
       alert(error.response.data.message)
     }

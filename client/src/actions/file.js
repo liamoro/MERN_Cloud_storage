@@ -49,7 +49,6 @@ export function  createDir(dirId, name) {
         headers: {Authorization: `Bearer ${localStorage.getItem('token')}`}
       })
       dispatch(addFile(response.data))
-      console.log("file.js dir was created ", response.data)
     } catch (e) {
       if (e.response.status === 401 && e.response.statusText === "Unauthorized") {
         console.log("User is unauthorized!")
@@ -82,14 +81,12 @@ export function  uploadFile(file, dirId) {
         headers: {Authorization: `Bearer ${localStorage.getItem('token')}`},
         onUploadProgress: progressEvent => {
           const totalLength = progressEvent.lengthComputable ? progressEvent.total : progressEvent.target.getResponseHeader('content-length') || progressEvent.target.getResponseHeader('x-decompressed-content-length');
-          console.log('total', totalLength)
           if (totalLength) {
               dispatch(changeUploadFile({...uploadFile, progress: Math.round((progressEvent.loaded * 100) / totalLength)  }))
           }
         }
       })
       dispatch(addFile(response.data))
-      // console.log("file.js dir was created ", response.data)
     } catch (e) {
       alert(e.response.data.message)
     }
@@ -124,10 +121,8 @@ export async function downloadFile(file) {
 }
 
 export function deleteFile(file) {
-  console.log('DF File: ', file)
   return async dispatch => { 
     try {
-      console.log("start d")
       const response = await axios.delete(`${API_URL}api/files?id=${file._id}`, {
         headers: {
           Authorization: `Bearer ${localStorage.getItem('token')}`

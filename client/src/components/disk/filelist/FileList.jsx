@@ -17,7 +17,6 @@ function FileList() {
     return <div className='loader'>Файлы не найдены</div>
   }
   if (fileView === 'plate') {
-    console.log('fileplate', files)
     return (
       <div className='fileplate'>
           {files?.map(file =>

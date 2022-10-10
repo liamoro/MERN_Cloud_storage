@@ -1,7 +1,6 @@
 const SET_USER = 'SET_USER' // type of action
 const LOGOUT = 'LOGOUT' 
 
-// console.log("LS from reducers:: ", localStorage.getItem('token'))
 
 // isAuth : false
 // как правильно настроить дефолт диспатча

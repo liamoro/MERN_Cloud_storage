@@ -8,7 +8,6 @@ import { deleteFile, downloadFile } from '../../../../actions/file'
 import sizeFormat from '../../../../utils/sizeFormat'
 
 function File({file}) {
-  // console.log("File.jsx:: ", file)
   const dispatch = useDispatch()
   const currentDir = useSelector(state => state.files.currentDir)
   const fileView = useSelector(state => state.files.view)
@@ -27,11 +26,8 @@ function File({file}) {
     downloadFile(file)
   }
   function deleteHandler (e) {
-    console.log("DELETE HANDLER")
     e.stopPropagation()
-    console.log("dispatch(deleteFile(file))  before")
     dispatch(deleteFile(file))
-    console.log("dispatch(deleteFile(file))  after")
   }
 
   if (fileView === 'list') {
